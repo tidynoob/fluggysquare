@@ -37,7 +37,6 @@
       <div class="button-group">
         <div
           class="button"
-          v-if="isGardenerOrTorActive || grimoire.isMockAssignmentsAllowed"
           @click="assignRoles"
           :class="{
             disabled: selectedRoles !== nonTravellers || !selectedRoles,
@@ -49,7 +48,9 @@
           {{
             isGardenerOrTorActive
               ? "Assign " + selectedRoles + " characters randomly"
-              : "Mock assignment"
+              : grimoire.isMockAssignmentsAllowed
+                ? "Mock assignment"
+                : "Assign " + selectedRoles + " characters randomly"
           }}
         </div>
         <div
@@ -172,17 +173,10 @@ export default {
     },
     assignAndSendRoles() {
       const popup = this.players.some((player) => !player.connected)
-        ? "WARNING: Some players have not yet taken their seats. Are you sure you want to assign and distribute characters?"
-        : "Do you want to assign and distribute characters to all players?";
+        ? "WARNING: Some players have not yet taken their seats. Are you sure you want to assign characters?"
+        : "Do you want to assign characters to all players?";
       if (!confirm(popup)) return;
       this.assignRoles();
-      this.$store.commit("session/distributeRoles", true);
-      setTimeout(
-        (() => {
-          this.$store.commit("session/distributeRoles", false);
-        }).bind(this),
-        2000,
-      );
     },
     ...mapMutations(["toggleModal"]),
   },
