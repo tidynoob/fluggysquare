@@ -67,7 +67,22 @@ library.add(
 Vue.component("font-awesome-icon", FontAwesomeIcon);
 Vue.config.productionTip = false;
 
-new Vue({
-  render: (h) => h(App),
-  store,
-}).$mount("#app");
+import {
+  initDiscordSdk,
+  isDiscordActivity,
+  isDiscordStoryteller,
+} from "./services/discord";
+
+async function bootstrap() {
+  if (isDiscordActivity) {
+    await initDiscordSdk();
+    store.commit("setDiscordStoryteller", isDiscordStoryteller);
+  }
+
+  new Vue({
+    render: (h) => h(App),
+    store,
+  }).$mount("#app");
+}
+
+bootstrap();

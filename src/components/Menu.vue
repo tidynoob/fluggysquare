@@ -286,6 +286,7 @@
 
 <script>
 import { mapMutations, mapState } from "vuex";
+import { isDiscordActivity, discordSdk } from "../services/discord";
 
 export default {
   computed: {
@@ -303,6 +304,15 @@ export default {
       tab: "grimoire",
     };
   },
+  mounted() {
+    if (this.$store.state.discord.isActivity) {
+      if (this.$store.state.discord.isStoryteller) {
+        this.hostSession();
+      } else {
+        this.joinSession();
+      }
+    }
+  },
   methods: {
     setBackground() {
       const background = prompt("Enter custom background URL");
@@ -312,10 +322,15 @@ export default {
     },
     hostSession() {
       if (this.session.sessionId) return;
-      const sessionId = prompt(
-        "Enter a channel number / name for your session",
-        Math.round(Math.random() * 10000),
-      );
+      let sessionId;
+      if (isDiscordActivity && discordSdk && discordSdk.channelId) {
+        sessionId = discordSdk.channelId;
+      } else {
+        sessionId = prompt(
+          "Enter a channel number / name for your session",
+          Math.round(Math.random() * 10000),
+        );
+      }
       if (sessionId) {
         this.$store.commit("session/clearVoteHistory");
         this.$store.commit("session/setSpectator", false);
@@ -351,11 +366,16 @@ export default {
     },
     joinSession() {
       if (this.session.sessionId) return this.leaveSession();
-      let sessionId = prompt(
-        "Enter the channel number / name of the session you want to join",
-      );
-      if (sessionId.match(/^https?:\/\//i)) {
-        sessionId = sessionId.split("#").pop();
+      let sessionId;
+      if (isDiscordActivity && discordSdk && discordSdk.channelId) {
+        sessionId = discordSdk.channelId;
+      } else {
+        sessionId = prompt(
+          "Enter the channel number / name of the session you want to join",
+        );
+        if (sessionId && sessionId.match(/^https?:\/\//i)) {
+          sessionId = sessionId.split("#").pop();
+        }
       }
       if (sessionId) {
         this.$store.commit("session/clearVoteHistory");

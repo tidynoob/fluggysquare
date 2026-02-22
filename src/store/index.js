@@ -120,12 +120,19 @@ const customRole = {
   isCustom: true,
 };
 
+import { isDiscordActivity, isDiscordStoryteller } from "../services/discord";
+
 export default new Vuex.Store({
   modules: {
     players,
     session,
   },
   state: {
+    discord: {
+      isActivity: isDiscordActivity,
+      isStoryteller: isDiscordStoryteller,
+      user: null,
+    },
     grimoire: {
       isNight: false,
       isNightOrder: true,
@@ -195,6 +202,12 @@ export default new Vuex.Store({
     rolesJSONbyId: () => rolesJSONbyId,
   },
   mutations: {
+    setDiscordUser(state, user) {
+      state.discord.user = user;
+    },
+    setDiscordStoryteller(state, isStoryteller) {
+      state.discord.isStoryteller = isStoryteller;
+    },
     setZoom: set("zoom"),
     setBackground: set("background"),
     toggleMuted: toggle("isMuted"),
