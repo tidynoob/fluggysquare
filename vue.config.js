@@ -4,6 +4,12 @@ module.exports = {
   publicPath: process.env.NODE_ENV === "production" ? "/" : "/",
   devServer: {
     allowedHosts: 'all',
-    port: 8080
+    port: 8080,
+    client: {
+      webSocketURL: 'auto://0.0.0.0:0/ws',
+    }
+  },
+  configureWebpack: {
+    devtool: 'source-map'
   }
 };
