@@ -291,10 +291,7 @@ import { isDiscordActivity, discordSdk } from "../services/discord";
 export default {
   computed: {
     showSendCharacters: function () {
-      return (
-        this.npcs.some((npc) => npc.id === "gardener") &&
-        !this.npcs.some((npc) => npc.id === "tor")
-      );
+      return !this.npcs.some((npc) => npc.id === "tor");
     },
     ...mapState(["grimoire", "session", "edition"]),
     ...mapState("players", ["players", "npcs"]),
